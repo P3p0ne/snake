@@ -9,11 +9,7 @@
   },
   "author": "",
   "license": "ISC",
-
-  "dependencies": {
-
-  },
   "devDependencies": {
-
+    "@types/node": "^16.10.2"
   }
 }
