@@ -6,9 +6,13 @@ import {LogProvider} from "../util/logProvider";
 
 import '../controller/user.controller';
 import {UserService} from "../service/user.service";
+import {Database} from "../db/database";
+import {Config} from "../util/config";
+import {UserRepository} from "../db/repositories/user.repository";
 
 const container = new Container({ skipBaseClassChecks: true });
 
+container.bind<Config>(TYPES.Config).to(Config).inSingletonScope();
 container.bind<LogProvider>(TYPES.LogProvider).to(LogProvider).inSingletonScope();
 container.bind<Logger>(TYPES.Logger).toDynamicValue(context => {
     const namedMetadata = context.currentRequest.target.getNamedTag();
@@ -19,8 +23,11 @@ container.bind<Logger>(TYPES.Logger).toDynamicValue(context => {
 
     return context.container.get<LogProvider>(TYPES.LogProvider).createLogger(name!.split(/(?=[A-Z])/).join('-').toLowerCase());
 });
+container.bind<Database>(TYPES.Database).to(Database).inSingletonScope();
+container.bind<UserRepository>(TYPES.UserRepository).to(UserRepository).inSingletonScope();
 
 container.bind<UserService>(TYPES.UserService).to(UserService).inSingletonScope();
+
 
 container
     .bind<interfaces.Factory<InversifyExpressServer>>(TYPES.InversifyExpressServerFactory)

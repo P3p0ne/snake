@@ -9,10 +9,15 @@
   },
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=12"
+  },
   "dependencies": {
     "express": "^4.17.1",
     "inversify": "^5.1.1",
     "inversify-express-utils": "^6.3.2",
+    "js-yaml": "^4.1.0",
+    "mongodb": "^4.1.2",
     "nconf": "^0.11.3",
     "reflect-metadata": "^0.1.13",
     "winston": "^3.3.3",
@@ -20,6 +25,8 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
+    "@types/js-yaml": "^4.0.3",
+    "@types/nconf": "^0.10.1",
     "@types/node": "^16.10.2",
     "typescript": "^4.4.3"
   }

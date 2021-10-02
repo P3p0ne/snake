@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
 import {InversifyExpressServer} from "inversify-express-utils";
-import { interfaces as inversifyInterfaces } from 'inversify';
+import {interfaces as inversifyInterfaces} from 'inversify';
 import {TYPES} from "./inversify/inversify-types";
 import {container} from "./inversify/inversify-config";
 import { Application } from 'express';
@@ -9,17 +9,18 @@ import * as bodyParser from 'body-parser';
 import { Server as HttpServer } from 'http';
 import {Logger} from "./util/logger";
 import {AddressInfo} from "net";
+import {Config} from "./util/config";
+import {Database} from "./db/database";
 
 export class App {
     private readonly server: InversifyExpressServer;
     private readonly container: inversifyInterfaces.Container;
     private readonly log: Logger;
-    private readonly appName: string;
+    private database: Database | undefined;
+
     private httpServer: HttpServer | undefined;
 
-    public constructor(appName: string) {
-        this.appName = appName;
-
+    public constructor(private readonly appName: string, private readonly config: Config) {
         this.container = container;
         this.log = this.container.getNamed<Logger>(TYPES.Logger, 'app');
         this.server = this.container.get<() => InversifyExpressServer>(TYPES.InversifyExpressServerFactory)();
@@ -42,7 +43,12 @@ export class App {
         this.log.info(`${this.appName} starting...`);
 
         try {
-            this.httpServer = this.server.build().listen(3000);
+            this.log.info('Start connecting to database...');
+            this.database = this.container.get<Database>(TYPES.Database);
+            await this.database.connect();
+            this.log.info('Successful connecting to database.');
+
+            this.httpServer = this.server.build().listen(this.config.config.webServer.port);
             this.log.info(`Server is listening on port ${(this.httpServer.address() as AddressInfo).port}. Leaving http server startup phase...`);
         } catch (e: unknown) {
             this.log.error(`Failed to start ${this.appName}`, { error: e });
@@ -51,4 +57,4 @@ export class App {
     }
 }
 
-void new App('Snake Server').start();
+void new App('Snake Server', new Config()).start();
