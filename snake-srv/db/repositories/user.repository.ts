@@ -24,7 +24,9 @@ export class UserRepository {
             }
             throw e;
         }
-
     }
 
+    public async findUserByName(name: string): Promise<User | null> {
+        return this.collection.findOne({ name }, { projection: { _id: 0 }});
+    }
 }

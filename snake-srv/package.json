@@ -20,6 +20,7 @@
     "mongodb": "^4.1.2",
     "nconf": "^0.11.3",
     "reflect-metadata": "^0.1.13",
+    "uuid": "^8.3.2",
     "winston": "^3.3.3",
     "winston-transport": "^4.4.0"
   },
@@ -28,6 +29,7 @@
     "@types/js-yaml": "^4.0.3",
     "@types/nconf": "^0.10.1",
     "@types/node": "^16.10.2",
+    "@types/uuid": "^8.3.1",
     "typescript": "^4.4.3"
   }
 }
