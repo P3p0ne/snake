@@ -5,7 +5,8 @@ const TYPES = {
     LogProvider: Symbol.for('LogProvider'),
     UserService: Symbol.for('UserService'),
     Database: Symbol.for('Database'),
-    UserRepository: Symbol.for('UserRepository')
+    UserRepository: Symbol.for('UserRepository'),
+    AuthService: Symbol.for('AuthService')
 }
 
 export { TYPES };

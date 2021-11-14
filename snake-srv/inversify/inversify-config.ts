@@ -9,6 +9,7 @@ import {UserService} from "../service/user.service";
 import {Database} from "../db/database";
 import {Config} from "../util/config";
 import {UserRepository} from "../db/repositories/user.repository";
+import {AuthService} from "../service/auth.service";
 
 const container = new Container({ skipBaseClassChecks: true });
 
@@ -27,6 +28,7 @@ container.bind<Database>(TYPES.Database).to(Database).inSingletonScope();
 container.bind<UserRepository>(TYPES.UserRepository).to(UserRepository).inSingletonScope();
 
 container.bind<UserService>(TYPES.UserService).to(UserService).inSingletonScope();
+container.bind<AuthService>(TYPES.AuthService).to(AuthService).inSingletonScope();
 
 
 container
