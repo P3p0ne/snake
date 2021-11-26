@@ -5,7 +5,8 @@ import {User} from "../entities/user.entity";
 import {UserRepository} from "../db/repositories/user.repository";
 import * as crypto from 'crypto';
 import * as uuid from 'uuid';
-import {ResponseError} from "../util/util";
+import {PagedResult} from "../entities/paged-result.entity";
+import {BadRequestError, UserExistsError, UserNotExistsError} from "../util/problem-json-errors";
 
 @injectable()
 export class UserService {
@@ -16,7 +17,7 @@ export class UserService {
         const dbUser = await this.userRepository.findUserByName(user.name);
         if (dbUser != null) {
             this.log.error(`Username "${user.name}" already exists.`);
-            throw new ResponseError('Username already exists.', 400);
+            throw new UserExistsError('Username already exists.');
         }
 
         // Hash password to save in db
@@ -39,7 +40,7 @@ export class UserService {
         return this.userRepository.insertUser(newUser);
     }
 
-    public async getTopPlayer(limit?: number, offset?: number): Promise<Array<User>> {
+    public async getTopPlayers(limit?: number, offset?: number): Promise<PagedResult<User>> {
         if (!limit) {
             limit = 10;
         }
@@ -48,5 +49,19 @@ export class UserService {
         }
 
         return this.userRepository.findTopUsers(limit, offset);
+    }
+
+    public async updateUserHighscore(id: string, highscore: number): Promise<void> {
+        const user = await this.userRepository.findUserById(id);
+
+        if (!user) {
+            throw new UserNotExistsError('Could not find user to update highscore');
+        }
+
+        if (user.highscore >= highscore) {
+            throw new BadRequestError('Current Game score is lower or equal than current user highscore');
+        }
+
+        await this.userRepository.updateHighscore(id, highscore);
     }
 }

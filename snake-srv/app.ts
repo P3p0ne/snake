@@ -19,6 +19,7 @@ import { BasicStrategy } from 'passport-http';
 import {User} from "./entities/user.entity";
 import crypto from "crypto";
 import { UserRepository } from "./db/repositories/user.repository";
+import {InternalServerError, PathNotFoundError, ProblemJsonError} from "./util/problem-json-errors";
 
 
 export class App {
@@ -117,6 +118,27 @@ export class App {
             });
 
             this.server.setErrorConfig((app: Application) => {
+                app.use((req: Request, res: Response, next: NextFunction) => {
+                    next(new PathNotFoundError(req.path));
+                });
+
+                app.use((error: ProblemJsonError | Error, req: Request, res: Response, next: NextFunction) => {
+                    if (res.headersSent) {
+                        // headers were already sent, delegate to default express error handler (closes connection)
+                        next(error);
+
+                        return;
+                    }
+
+                    if (error instanceof ProblemJsonError) {
+                        res.status(error.status).json(error);
+
+                        return;
+                    }
+
+                    this.log.error('Unhandled error', { error });
+                    res.status(500).json(new InternalServerError());
+                });
             });
 
             this.httpServer = this.server.build().listen(this.config.config.webServer.port);

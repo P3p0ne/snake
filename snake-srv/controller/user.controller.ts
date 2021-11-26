@@ -2,19 +2,22 @@ import {
     BaseHttpController,
     controller,
     httpGet,
+    httpPatch,
     httpPost,
+    queryParam,
     request,
     requestBody,
     requestParam,
-    response, results,
-    TYPE
+    response,
+    results
 } from "inversify-express-utils";
 import {Request, Response} from "express";
 import {inject} from "inversify";
 import {TYPES} from "../inversify/inversify-types";
 import {UserService} from "../service/user.service";
-import {ResponseError} from "../util/util";
-import passport from "passport";
+import {BadRequestError, ValidationError} from "../util/problem-json-errors";
+import {PagedResultQuerySchema} from "../schemas/paged-result-query.schema";
+
 @controller('/users')
 export class UserController extends BaseHttpController {
     public constructor(@inject(TYPES.UserService) private readonly userService: UserService) {
@@ -23,19 +26,31 @@ export class UserController extends BaseHttpController {
 
     @httpPost('/')
     private async createUser(@request() req: Request, @response() res: Response, @requestBody() body: { name: string, password: string }): Promise<results.JsonResult> {
-        try {
-            await this.userService.createUser(body);
-            return this.json(null, 201);
-        } catch (e: unknown) {
-            if (e instanceof ResponseError) {
-                return this.json({error: e.message}, e.code);
-            }
-            return this.json({error: 'Internal Server Error'}, 500);
-        }
+        await this.userService.createUser(body);
+        return this.json(null, 201);
     }
 
-    @httpGet('/:id', passport.authenticate(['local', 'basic', 'session']))
-    private getUser(@request() req: Request, @response() res: Response, @requestParam('id') id: string): results.JsonResult {
-        return this.json({ error: 'HALLO '}, 500);
+    @httpGet('/highscores')
+    private async getTopUsers(@request() req: Request, @response() res: Response): Promise<results.JsonResult> {
+        const validationResult = PagedResultQuerySchema.validate(req.query);
+
+        if (validationResult.error) {
+            throw new ValidationError(validationResult.error.message);
+        }
+
+        const result: { limit: number, offset: number } = validationResult.value;
+
+        return this.json(await this.userService.getTopPlayers(result.limit, result.offset), 200);
+    }
+
+    @httpPatch('/:id/highscore')
+    private async patchUserHighscore(@request() req: Request, @response() res: Response,@requestParam('id') userId: string, @requestBody() body: { highscore: number }): Promise<results.StatusCodeResult> {
+        if(!body.hasOwnProperty('highscore')) {
+            throw new BadRequestError('Body is incorrect. Highsore is missing.');
+        }
+
+
+        await this.userService.updateUserHighscore(userId, body.highscore);
+        return this.statusCode(204);
     }
 }

@@ -6,7 +6,9 @@ const TYPES = {
     UserService: Symbol.for('UserService'),
     Database: Symbol.for('Database'),
     UserRepository: Symbol.for('UserRepository'),
-    AuthService: Symbol.for('AuthService')
+    AuthService: Symbol.for('AuthService'),
+    GameRepository: Symbol.for('GameRepository'),
+    GameService: Symbol.for('GameService')
 }
 
 export { TYPES };

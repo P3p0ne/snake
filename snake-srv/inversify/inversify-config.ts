@@ -6,13 +6,13 @@ import {LogProvider} from "../util/logProvider";
 
 import '../controller/user.controller';
 import '../controller/auth.controller';
-import '../controller/highscore.controller';
 
 import {UserService} from "../service/user.service";
 import {Database} from "../db/database";
 import {Config} from "../util/config";
 import {UserRepository} from "../db/repositories/user.repository";
 import {AuthService} from "../service/auth.service";
+import {GameRepository} from "../db/repositories/game.repository";
 
 const container = new Container({ skipBaseClassChecks: true });
 
@@ -31,6 +31,7 @@ container.bind<Logger>(TYPES.Logger).toDynamicValue(context => {
 });
 container.bind<Database>(TYPES.Database).to(Database).inSingletonScope();
 container.bind<UserRepository>(TYPES.UserRepository).to(UserRepository).inSingletonScope();
+container.bind<GameRepository>(TYPES.GameRepository).to(GameRepository).inSingletonScope();
 
 container.bind<UserService>(TYPES.UserService).to(UserService).inSingletonScope();
 container.bind<AuthService>(TYPES.AuthService).to(AuthService).inSingletonScope();
