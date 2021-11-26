@@ -1,27 +1,41 @@
-import {controller, httpPost, request, requestBody, requestParam, response, TYPE} from "inversify-express-utils";
+import {
+    BaseHttpController,
+    controller,
+    httpGet,
+    httpPost,
+    request,
+    requestBody,
+    requestParam,
+    response, results,
+    TYPE
+} from "inversify-express-utils";
 import {Request, Response} from "express";
-import {User} from "../entities/user.entity";
 import {inject} from "inversify";
 import {TYPES} from "../inversify/inversify-types";
 import {UserService} from "../service/user.service";
 import {ResponseError} from "../util/util";
-
+import passport from "passport";
 @controller('/users')
-export class UserController {
-    public constructor(@inject(TYPES.UserService) private readonly userService: UserService) {}
+export class UserController extends BaseHttpController {
+    public constructor(@inject(TYPES.UserService) private readonly userService: UserService) {
+        super();
+    }
 
     @httpPost('/')
-    private async createUser(@request() req: Request, @response() res: Response, @requestBody() body: { name: string, password: string }) {
+    private async createUser(@request() req: Request, @response() res: Response, @requestBody() body: { name: string, password: string }): Promise<results.JsonResult> {
         try {
             await this.userService.createUser(body);
-            res.status(201).end();
-            return;
+            return this.json(null, 201);
         } catch (e: unknown) {
             if (e instanceof ResponseError) {
-                res.status(e.code).json({error: e.message});
-                return;
+                return this.json({error: e.message}, e.code);
             }
-            res.status(500).json({error: 'Internal Server Error'});
+            return this.json({error: 'Internal Server Error'}, 500);
         }
+    }
+
+    @httpGet('/:id', passport.authenticate(['local', 'basic', 'session']))
+    private getUser(@request() req: Request, @response() res: Response, @requestParam('id') id: string): results.JsonResult {
+        return this.json({ error: 'HALLO '}, 500);
     }
 }

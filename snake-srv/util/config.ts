@@ -1,5 +1,5 @@
 import {readFileSync} from "fs";
-import * as nconf from 'nconf';
+import nconf from 'nconf';
 import { load as loadYaml, dump as dumpYaml } from 'js-yaml';
 import {injectable} from "inversify";
 

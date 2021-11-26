@@ -4,6 +4,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "alwaysStrict": true,
     "noImplicitAny": true,
     "noImplicitReturns": false,

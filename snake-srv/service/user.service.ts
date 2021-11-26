@@ -38,4 +38,15 @@ export class UserService {
         // save new user in db
         return this.userRepository.insertUser(newUser);
     }
+
+    public async getTopPlayer(limit?: number, offset?: number): Promise<Array<User>> {
+        if (!limit) {
+            limit = 10;
+        }
+        if (!offset) {
+            offset = 0;
+        }
+
+        return this.userRepository.findTopUsers(limit, offset);
+    }
 }
