@@ -1,4 +1,4 @@
 # snake
 FOM Projekt
 
-Node Version: 16
+Node Version: 12
