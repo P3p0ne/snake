@@ -1,5 +1,11 @@
 <mat-toolbar class="fixed-top">
   <span>Snake</span>
   <span class="example-spacer"></span>
-  <button *ngIf="(tokenStorage.user$ | async) != null" mat-button (click)="logout()">Logout</button>
+  <button mat-button [matMenuTriggerFor]="menu" *ngIf="(tokenStorage.user$ | async) != null">
+    <mat-icon matSuffix>person_pin</mat-icon>
+    {{(tokenStorage.user$ | async)?.username}}</button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="logout()">Logout</button>
+  </mat-menu>
+
 </mat-toolbar>
