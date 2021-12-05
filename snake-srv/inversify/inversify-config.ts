@@ -13,6 +13,7 @@ import {Config} from "../util/config";
 import {UserRepository} from "../db/repositories/user.repository";
 import {AuthService} from "../service/auth.service";
 import {GameRepository} from "../db/repositories/game.repository";
+import {AuthJwtMiddleware} from "../middleware/auth-jwt.middleware";
 
 const container = new Container({ skipBaseClassChecks: true });
 
@@ -35,6 +36,8 @@ container.bind<GameRepository>(TYPES.GameRepository).to(GameRepository).inSingle
 
 container.bind<UserService>(TYPES.UserService).to(UserService).inSingletonScope();
 container.bind<AuthService>(TYPES.AuthService).to(AuthService).inSingletonScope();
+
+container.bind<AuthJwtMiddleware>(TYPES.AuthJwtMiddleware).to(AuthJwtMiddleware);
 
 container
     .bind<interfaces.Factory<InversifyExpressServer>>(TYPES.InversifyExpressServerFactory)

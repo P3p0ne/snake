@@ -11,12 +11,11 @@ import {inject} from "inversify";
 import {TYPES} from "../inversify/inversify-types";
 import {GameService} from "../service/game.service";
 import {Request, Response} from "express";
-import {Game} from "../entities/game.entity";
 import {GameSchema} from "../schemas/game.schema";
 import {ValidationError} from "../util/problem-json-errors";
 import {PagedResultQuerySchema} from "../schemas/paged-result-query.schema";
 
-@controller('/games')
+@controller('/games', TYPES.AuthJwtMiddleware)
 export class GameController extends BaseHttpController {
     public constructor(@inject(TYPES.GameService) private readonly gameService: GameService) {
         super();

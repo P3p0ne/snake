@@ -1,5 +1,7 @@
 webServer:
-  port: 3000
+  port: 8080
 
 mongoDb:
   connectionString: mongodb://localhost:27017/snake
+
+secret: mysecret-for-snake-jwt-app

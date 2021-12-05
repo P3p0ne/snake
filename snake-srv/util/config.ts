@@ -26,6 +26,7 @@ export class Config {
 interface ConfigData {
     webServer: WebServerConfig;
     mongoDb: MongoDbConfig;
+    secret: string;
 }
 
 interface MongoDbConfig {

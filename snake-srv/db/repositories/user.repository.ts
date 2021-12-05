@@ -36,8 +36,8 @@ export class UserRepository {
         return this.collection.findOne({ id }, { projection: { _id: 0 }});
     }
 
-    public async findUserByName(name: string): Promise<User | null> {
-        return this.collection.findOne({ name }, { projection: { _id: 0 }});
+    public async findUserByName(username: string): Promise<User | null> {
+        return this.collection.findOne({ username }, { projection: { _id: 0 }});
     }
 
     public async findTopUsers(limit: number, offset: number): Promise<PagedResult<User>> {

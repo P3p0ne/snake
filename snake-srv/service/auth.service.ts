@@ -3,8 +3,10 @@ import {TYPES} from "../inversify/inversify-types";
 import {Logger} from "../util/logger";
 import {UserRepository} from "../db/repositories/user.repository";
 import {User} from "../entities/user.entity";
-import crypto from "crypto";
+import bcrypt from 'bcryptjs';
 import {Config} from "../util/config";
+import {AuthorizationError} from "../util/problem-json-errors";
+import jwt from 'jsonwebtoken';
 
 @injectable()
 export class AuthService {
@@ -24,15 +26,13 @@ export class AuthService {
         }
 
         // Password check
-        const sha512 = crypto.createHash('sha512');
-        sha512.update(Buffer.from(loggedUser.pw_salt, 'base64'));
-        sha512.update(Buffer.from(password, 'utf8'));
-        const hash = sha512.digest().toString('base64');
-
-        if (hash !== loggedUser.pw_hash) {
-            this.log.error('Login failed: Incorrect password');
-            throw new Error('Login failed: Incorrect password.');
+        const passwordIsValid = bcrypt.compareSync(password, loggedUser.pw_hash);
+        if (!passwordIsValid) {
+            throw new AuthorizationError('Invalid credentials');
         }
+
+        // Generate new jwt token
+        loggedUser.access_token = jwt.sign({ id: loggedUser.id }, this.config.config.secret,{ expiresIn: 86400 });
 
         this.log.info('Successfully logged in');
         return loggedUser;

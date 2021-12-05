@@ -1,7 +1,7 @@
 export interface User {
     id: string;
-    name: string;
-    pw_salt: string;
+    username: string;
     pw_hash: string;
     highscore: number;
+    access_token?: string;
 }

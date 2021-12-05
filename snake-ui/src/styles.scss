@@ -1,0 +1,66 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+.main-div{
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-card {
+  max-width: 400px;
+}
+
+.register-header-image {
+  background-image: url('//ssl.gstatic.com/accounts/ui/avatar_2x.png');
+  background-size: cover;
+}
+
+/* input color class */
+::ng-deep input.mat-input-element {
+  color: white;
+  caret-color: white;
+}
+
+/* Change label color on focused */
+::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
+  color: white !important;
+  border-color: white !important;
+}
+
+/* underline border color on focused */
+::ng-deep .mat-focused .mat-form-field-underline .mat-form-field-ripple{
+  background-color: white !important;
+}
+//input outline color
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+  color: white!important;
+  // opacity: 1!important;
+}
+
+::ng-deep .mat-input-invalid .mat-input-ripple {
+  background-color: red;
+}
+
+::ng-deep .mat-raised-button.mat-success,
+.mat-flat-button.mat-success,
+.mat-fab.mat-success,
+.mat-mini-fab.mat-success {
+  color: #f0fff3;
+  background-color: darkgray;
+}
+
+::ng-deep .mat-toolbar.mat-primary {
+  color: #f0fff3;
+  background-color: darkgray;
+}
+
+.full-width {
+  width: 100%;
+}
+

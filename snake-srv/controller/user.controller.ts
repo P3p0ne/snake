@@ -18,16 +18,10 @@ import {UserService} from "../service/user.service";
 import {BadRequestError, ValidationError} from "../util/problem-json-errors";
 import {PagedResultQuerySchema} from "../schemas/paged-result-query.schema";
 
-@controller('/users')
+@controller('/users', TYPES.AuthJwtMiddleware)
 export class UserController extends BaseHttpController {
     public constructor(@inject(TYPES.UserService) private readonly userService: UserService) {
         super();
-    }
-
-    @httpPost('/')
-    private async createUser(@request() req: Request, @response() res: Response, @requestBody() body: { name: string, password: string }): Promise<results.JsonResult> {
-        await this.userService.createUser(body);
-        return this.json(null, 201);
     }
 
     @httpGet('/highscores')

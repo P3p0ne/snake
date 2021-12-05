@@ -38,6 +38,12 @@ export class AuthorizationError extends ProblemJsonError {
     }
 }
 
+export class ForbiddenError extends ProblemJsonError {
+    public constructor(detail: string, message?: string) {
+        super('forbidden-error', 'Forbidden', detail, 403, message);
+    }
+}
+
 export class UserExistsError extends ProblemJsonError {
     public constructor(username: string, message?: string) {
         super('resource-already-exists', 'Resource already exists.', `The user ${username} already exists.`, 400, message);
