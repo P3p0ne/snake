@@ -1,0 +1,18 @@
+<div style="margin-top: 100px;">
+  <button mat-raised-button (click)="back()" class="button">
+    Back to Overview
+  </button>
+  <button class="button" mat-raised-button  [ngClass]="{'disable-clicks': gameRunning}" (click)="start('classic')">Start Game</button>
+
+  <div class="game-container">
+    <div class="game-header">
+      <div class="score-block">
+        <h3 class="score" [ngClass]="{'new-best-score': newBestScore}">Score: {{score}}</h3>
+        <h3 class="best-score" [ngClass]="{'new-best-score': newBestScore}">Best Score: {{this.tokenStorage.user$.value?.highscore}}</h3>
+      </div>
+    </div>
+    <div class="row" *ngFor="let column of board; let i = index;">
+      <div class="column" [ngStyle]="{'background-color': setColors(i, j)}" *ngFor="let row of column; let j = index"></div>
+    </div>
+  </div>
+</div>

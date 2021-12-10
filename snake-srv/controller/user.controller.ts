@@ -43,7 +43,6 @@ export class UserController extends BaseHttpController {
             throw new BadRequestError('Body is incorrect. Highsore is missing.');
         }
 
-
         await this.userService.updateUserHighscore(userId, body.highscore);
         return this.statusCode(204);
     }

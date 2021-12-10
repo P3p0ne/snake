@@ -20,6 +20,8 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {CommonModule} from "@angular/common";
 import {MatMenuModule} from "@angular/material/menu";
+import {MatTableModule} from "@angular/material/table";
+import { SnakeComponent } from './components/snake/snake.component';
 
 @NgModule({
   declarations: [
@@ -27,28 +29,30 @@ import {MatMenuModule} from "@angular/material/menu";
     LoginComponent,
     RegisterComponent,
     HomeComponent,
-    NavbarComponent
+    NavbarComponent,
+    SnakeComponent
   ],
-  imports: [
-    BrowserModule,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    ToastrModule.forRoot({
-      positionClass: 'toast-top-center',
-      preventDuplicates: true,
-    }),
-    MatToolbarModule,
-    MatMenuModule
-  ],
+    imports: [
+        BrowserModule,
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatCardModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatIconModule,
+        ToastrModule.forRoot({
+            positionClass: 'toast-top-center',
+            preventDuplicates: true,
+        }),
+        MatToolbarModule,
+        MatMenuModule,
+        MatTableModule
+    ],
   providers: [
     authInterceptorProviders
   ],
