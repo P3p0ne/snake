@@ -2,24 +2,28 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Game} from "../interfaces/game.interface";
 import {Observable} from "rxjs";
+import {TokenStorageService} from "./token-storage.service";
+import {PagedResult} from "../interfaces/paged-result.interface";
 
 const GAME_API = 'http://localhost:8080/games';
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'})
-}
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
+  private httpOptions = {};
 
-  public constructor(private readonly http: HttpClient) { }
-
-  public saveGame(game: Game): Observable<any> {
-    return this.http.post(GAME_API, { userId: game.userId, score: game.score }, httpOptions);
+  public constructor(private readonly http: HttpClient, private readonly tokenStorage: TokenStorageService) {
+    this.httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'X-Access-Token': this.tokenStorage.getToken() as string })
+    }
   }
 
-  public getGamesByUserId(userId: string): Observable<Array<Game>> {
-    return this.http.get<Array<Game>>(`${GAME_API}/${userId}`, httpOptions);
+  public saveGame(game: Game): Observable<any> {
+    return this.http.post(GAME_API, { userId: game.userId, score: game.score }, this.httpOptions);
+  }
+
+  public getGamesByUserId(userId: string): Observable<PagedResult<Game>> {
+    return this.http.get<PagedResult<Game>>(`${GAME_API}/${userId}`, this.httpOptions);
   }
 }

@@ -20,8 +20,7 @@ export class AuthJwtMiddleware extends BaseMiddleware {
         }
 
         try {
-            const decoded = jwt.verify(token as string, this.config.config.secret);
-            console.log(decoded);
+            jwt.verify(token as string, this.config.config.secret);
             next();
         } catch (e) {
             throw new InternalServerError((e as Error).message);

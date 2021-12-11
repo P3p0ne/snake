@@ -1,0 +1,21 @@
+/* input color class */
+::ng-deep input.mat-input-element {
+  color: white;
+  caret-color: white;
+}
+
+/* Change label color on focused */
+::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
+  color: white !important;
+  border-color: white !important;
+}
+
+/* underline border color on focused */
+::ng-deep .mat-focused .mat-form-field-underline .mat-form-field-ripple{
+  background-color: white !important;
+}
+//input outline color
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+  color: white!important;
+  // opacity: 1!important;
+}

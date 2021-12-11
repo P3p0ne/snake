@@ -1,8 +1,14 @@
 import {Component, HostListener, OnInit} from '@angular/core';
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {TokenStorageService} from "../../services/token-storage.service";
 import {User} from "../../interfaces/user.interface";
 import {UserService} from "../../services/user.service";
+import {PagedResult} from "../../interfaces/paged-result.interface";
+import {CollisionChecker, COLLISTIONS} from "../../services/collision-checker.service";
+import {GameService} from "../../services/game.service";
+import {Game} from "../../interfaces/game.interface";
+import {HttpErrorResponse} from "@angular/common/http";
+import {ToastrService} from "ngx-toastr";
 
 const BOARD_SIZE = 20;
 
@@ -22,13 +28,6 @@ const CONTROLS = {
   DOWN: 'ArrowDown'
 };
 
-const GAME_MODES = {
-  classic: 'Classic',
-  no_walls: 'No Walls',
-  obstacles: 'Obstacles'
-};
-
-
 @Component({
   selector: 'app-snake',
   templateUrl: './snake.component.html',
@@ -39,17 +38,17 @@ export class SnakeComponent implements OnInit {
   public score = 0;
   public newBestScore = false;
   public board: Array<Array<boolean>> = [];
-  public obstacles: Array<{x: number, y: number}> = [];
-  public getKeys = Object.keys;
+  public displayedColumns = ['name', 'highscore'];
 
-  private snake:{ direction: string | undefined, parts: Array<{ x: number, y: number }> } = {
+  public highscoreUserList: PagedResult<User>;
+
+  private snake: { direction: string | undefined, parts: Array<{ x: number, y: number }> } = {
     direction: CONTROLS.RIGHT,
     parts: [{ x: -1, y: -1 }]
   };
 
   private fruit = { x: -1, y: -1 };
   private tempDirection: string | undefined;
-  private default_mode = 'classic';
   private isGameOver = false;
   private interval: number | undefined;
 
@@ -69,16 +68,27 @@ export class SnakeComponent implements OnInit {
 
   keypress: string | undefined;
 
-  public constructor(private readonly router: Router, public readonly tokenStorage: TokenStorageService, private readonly userService: UserService) {
+  public constructor(
+    private readonly router: Router,
+    public readonly tokenStorage: TokenStorageService,
+    private readonly userService: UserService,
+    private readonly route: ActivatedRoute,
+    private readonly gameService: GameService,
+    private readonly toastr: ToastrService
+  ) {
     this.setBoard();
+    this.highscoreUserList = route.snapshot.data['topUser'];
   }
 
   ngOnInit(): void {
     this.gameRunning = false;
   }
 
-  public start(mode: string): void {
-    this.default_mode = mode || 'classic';
+  public start(): void {
+    if (this.gameRunning) {
+        return;
+    }
+
     this.newBestScore = false;
     this.gameRunning = true;
     this.score = 0;
@@ -94,17 +104,8 @@ export class SnakeComponent implements OnInit {
       this.snake.parts.push({ x: 8 + i, y: 8 });
     }
 
-    if (mode === 'obstacles') {
-      this.obstacles = [];
-      let j = 1;
-      do {
-        this.addObstacles();
-      } while (j++ < 9);
-    }
-
     this.resetFruit();
     this.updatePositions();
-    window.focus();
   }
 
   public back(): void {
@@ -125,39 +126,17 @@ export class SnakeComponent implements OnInit {
     return COLORS.BOARD;
   };
 
-  public addObstacles(): void {
-    let x = this.randomNumber();
-    let y = this.randomNumber();
-
-    if (this.board[y][x] === true || y === 8) {
-      return this.addObstacles();
-    }
-
-    this.obstacles.push({
-      x: x,
-      y: y
-    });
-  }
-
   public updatePositions(): void {
     let newHead = this.repositionHead();
     let me = this;
 
-    if (this.default_mode === 'classic' && this.boardCollision(newHead)) {
-      return this.gameOver();
-    } else if (this.default_mode === 'no_walls') {
-      this.noWallsTransition(newHead);
-    } else if (this.default_mode === 'obstacles') {
-      this.noWallsTransition(newHead);
-      if (this.obstacleCollision(newHead)) {
+    switch (CollisionChecker.checkCollision(newHead, this.board, BOARD_SIZE, this.fruit)) {
+      case COLLISTIONS.BOARD:
+      case COLLISTIONS.SELF:
         return this.gameOver();
-      }
-    }
-
-    if (this.selfCollision(newHead)) {
-      return this.gameOver();
-    } else if (this.fruitCollision(newHead)) {
-      this.eatFruit();
+      case COLLISTIONS.FRUIT:
+        this.eatFruit();
+        break;
     }
 
     let oldTail = this.snake.parts.pop();
@@ -189,48 +168,6 @@ export class SnakeComponent implements OnInit {
     return newHead;
   }
 
-  public noWallsTransition(part: { x: number, y: number }): void {
-    if (part.x === BOARD_SIZE) {
-      part.x = 0;
-    } else if (part.x === -1) {
-      part.x = BOARD_SIZE - 1;
-    }
-
-    if (part.y === BOARD_SIZE) {
-      part.y = 0;
-    } else if (part.y === -1) {
-      part.y = BOARD_SIZE - 1;
-    }
-  }
-
-  public checkObstacles(x: number, y: number): boolean {
-    let res = false;
-
-    this.obstacles.forEach((val) => {
-      if (val.x === x && val.y === y) {
-        res = true;
-      }
-    });
-
-    return res;
-  }
-
-  public obstacleCollision(part: { x: number, y: number }): boolean {
-    return this.checkObstacles(part.x, part.y);
-  }
-
-  public boardCollision(part: { x: number, y: number }): boolean {
-    return part.x === BOARD_SIZE || part.x === -1 || part.y === BOARD_SIZE || part.y === -1;
-  }
-
-  public selfCollision(part: { x: number, y: number }): boolean {
-    return this.board[part.y][part.x];
-  }
-
-  public fruitCollision(part: { x: number, y: number }): boolean {
-    return part.x === this.fruit.x && part.y === this.fruit.y;
-  }
-
   public gameOver(): void {
     this.isGameOver = true;
     this.gameRunning = false;
@@ -240,11 +177,20 @@ export class SnakeComponent implements OnInit {
       this.tokenStorage.user$.value.highscore = this.score;
       this.userService.setUserHighscore(this.tokenStorage.user$.value.id, this.score).subscribe({
         next: () => {
-        },
-        error: error => {}
+          this.userService.getTopUser().subscribe({
+            next: (result => this.highscoreUserList = result)
+          });
+        }
       })
       this.newBestScore = true;
     }
+
+    this.gameService.saveGame({ userId: this.tokenStorage.user$.value?.id as string, score: this.score} as Game).subscribe({
+      next: () => this.toastr.success('Saved new Game'),
+      error: (err: HttpErrorResponse) => {
+        this.toastr.error(`Status: ${err.status} - ${err.statusText}`);
+      }
+    })
 
     setTimeout(() => {
       me.isGameOver = false;
@@ -261,14 +207,11 @@ export class SnakeComponent implements OnInit {
     let x = this.randomNumber();
     let y = this.randomNumber();
 
-    if (this.board[y][x] === true || this.checkObstacles(x, y)) {
+    if (this.board[y][x]) {
       return this.resetFruit();
     }
 
-    this.fruit = {
-      x: x,
-      y: y
-    };
+    this.fruit = { x, y };
   }
 
   public eatFruit(): void {
