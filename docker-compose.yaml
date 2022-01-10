@@ -11,11 +11,18 @@ services:
   mongo-db:
     container_name: snake-db
     image: mongo:latest
+    # volumes:
+    #   - ./.docker/mongodb/mongod.conf:/etc/mongod.conf
+    #   - ./.docker/mongodb/initdb.d/:/docker-entrypoint-initdb.d/
+    #   - ./.docker/mongodb/data/db/:/data/db/
+    #   - ./.docker/mongodb/data/db/:/data/configdb/
 
-  # snake-ui:
-  #   container_name: snake-ui
-  #   build:
-  #     context: snake-ui/.
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - 4200:4200
+  snake-ui:
+    container_name: snake-ui
+    build:
+      context: snake-ui/.
+      dockerfile: Dockerfile
+      args:
+        host: localhost
+    ports:
+      - 8081:80
