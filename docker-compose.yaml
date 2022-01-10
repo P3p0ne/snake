@@ -1,0 +1,21 @@
+version: "3"
+services:
+  snake-srv:
+    container_name: snake-srv
+    build:
+      context: snake-srv/.
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+  
+  mongo-db:
+    container_name: snake-db
+    image: mongo:latest
+
+  # snake-ui:
+  #   container_name: snake-ui
+  #   build:
+  #     context: snake-ui/.
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 4200:4200
