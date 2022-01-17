@@ -33,6 +33,7 @@ FOM Project: _"Snake - Webanwendung im MEAN-Stack"_
 * Note: A MongoDB instance (declared in your config_defaults.yaml or config.yaml) is required to run the snake-srv backend!
 
 ## Build and run using docker-compose
+* Follow the preparation steps as mentioned above in the Frontend/Backend section for building docker container
 * Define the build-var `host` in docker-compose.yaml (Hostname you will use to access UI/Backend)
 * Run `docker-compose up -d --build` to build all images and run all containers
 * Run `docker-compose stop/start` to stop/start all containers
