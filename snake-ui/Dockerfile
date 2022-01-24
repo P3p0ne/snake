@@ -1,8 +1,8 @@
-# Stage 1: Intermediate container for building our project
+# Stage 1: Intermediate image for building our project
 FROM node:17-alpine3.14 AS builder
 ARG host
 
-# Workfolder in our container
+# Workfolder in our image
 WORKDIR /app
 
 # Copy project files

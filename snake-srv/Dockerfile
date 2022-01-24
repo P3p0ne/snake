@@ -1,7 +1,7 @@
-# Stage 1: Intermediate container for building our project
+# Stage 1: Intermediate image for building our project
 FROM node:17-alpine3.14 AS builder
 
-# Workfolder in our container
+# Workfolder in our image
 WORKDIR /src
 
 # Copy project files
@@ -17,7 +17,7 @@ RUN ./node_modules/.bin/tsc --watch false --project ./tsconfig.json --outDir ./o
 # Stage 2: Create smaller container image, necessary project files only
 FROM node:17-alpine3.14
 
-# Workfolder in our container
+# Workfolder in our image
 WORKDIR /src
 
 # Copy necessary project files in our final image
@@ -30,4 +30,4 @@ COPY --from=builder /src/package*.json ./
 EXPOSE 8080
 
 # Start server
-CMD [ "npm", "run", "start" ]
+ENTRYPOINT [ "npm", "run", "start" ]
