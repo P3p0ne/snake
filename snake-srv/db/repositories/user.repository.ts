@@ -5,7 +5,6 @@ import {Database} from "../database";
 import {User} from "../../entities/user.entity";
 import {Collection, MongoError} from "mongodb";
 import {PagedResult} from "../../entities/paged-result.entity";
-import {Game} from "../../entities/game.entity";
 
 @injectable()
 export class UserRepository {

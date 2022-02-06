@@ -4,7 +4,7 @@ import {TokenStorageService} from "../../services/token-storage.service";
 import {User} from "../../interfaces/user.interface";
 import {UserService} from "../../services/user.service";
 import {PagedResult} from "../../interfaces/paged-result.interface";
-import {CollisionChecker, COLLISTIONS} from "../../services/collision-checker.service";
+import {CollisionChecker, COLLISIONS} from "../../services/collision-checker.service";
 import {GameService} from "../../services/game.service";
 import {Game} from "../../interfaces/game.interface";
 import {HttpErrorResponse} from "@angular/common/http";
@@ -17,8 +17,7 @@ const COLORS = {
   FRUIT: '#EC644B',
   HEAD: '#336E7B',
   BODY: '#C8F7C5',
-  BOARD: '#332e2e',
-  OBSTACLE: '#383522'
+  BOARD: '#332e2e'
 };
 
 const CONTROLS = {
@@ -62,11 +61,7 @@ export class SnakeComponent implements OnInit {
     } else if (e.key === CONTROLS.DOWN && this.snake.direction !== CONTROLS.UP) {
       this.tempDirection = CONTROLS.DOWN;
     }
-
-    this.keypress = e.key;
   }
-
-  keypress: string | undefined;
 
   public constructor(
     private readonly router: Router,
@@ -128,13 +123,12 @@ export class SnakeComponent implements OnInit {
 
   public updatePositions(): void {
     let newHead = this.repositionHead();
-    let me = this;
 
     switch (CollisionChecker.checkCollision(newHead, this.board, BOARD_SIZE, this.fruit)) {
-      case COLLISTIONS.BOARD:
-      case COLLISTIONS.SELF:
+      case COLLISIONS.BOARD:
+      case COLLISIONS.SELF:
         return this.gameOver();
-      case COLLISTIONS.FRUIT:
+      case COLLISIONS.FRUIT:
         this.eatFruit();
         break;
     }
@@ -147,6 +141,7 @@ export class SnakeComponent implements OnInit {
 
     this.snake.direction = this.tempDirection as string;
 
+    let me = this;
     setTimeout(() => {
       me.updatePositions();
     }, this.interval);

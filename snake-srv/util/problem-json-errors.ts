@@ -14,16 +14,6 @@ export abstract class ProblemJsonError extends Error {
         this.detail = detail;
         this.status = status;
     }
-
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    public toJSON(): Record<string, unknown> {
-        return {
-            type: this.type,
-            title: this.title,
-            detail: this.detail,
-            status: this.status
-        };
-    }
 }
 
 export class ValidationError extends ProblemJsonError {

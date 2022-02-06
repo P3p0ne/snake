@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit {
           this.tokenStorage.saveToken(user.access_token);
           this.tokenStorage.saveUser(user);
 
-          this.router.navigateByUrl('/home');
+          this.router.navigateByUrl('/');
         },
         error: (err: HttpErrorResponse) => {
           this.toastr.error(`Status: ${err.status} - ${err.statusText}`);

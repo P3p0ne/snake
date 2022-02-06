@@ -19,6 +19,6 @@ export class GamesResolver implements Resolve<PagedResult<Game>> {
   }
 
   public resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<PagedResult<Game>> {
-    return this.gameService.getGamesByUserId(this.tokenService.user$.value?.id as  string);
+    return this.gameService.getGamesByUserId(this.tokenService.user$.value?.id as string);
   }
 }

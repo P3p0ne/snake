@@ -3,8 +3,6 @@ import {
     controller,
     httpGet,
     httpPatch,
-    httpPost,
-    queryParam,
     request,
     requestBody,
     requestParam,
@@ -38,7 +36,7 @@ export class UserController extends BaseHttpController {
     }
 
     @httpPatch('/:id/highscore')
-    private async patchUserHighscore(@request() req: Request, @response() res: Response,@requestParam('id') userId: string, @requestBody() body: { highscore: number }): Promise<results.StatusCodeResult> {
+    private async patchUserHighscore(@request() req: Request, @response() res: Response,@requestParam('id') userId: string, @requestBody() body: { highscore: number }): Promise<results.StatusCodeResult>  {
         if(!body.hasOwnProperty('highscore')) {
             throw new BadRequestError('Body is incorrect. Highsore is missing.');
         }
